@@ -152,11 +152,6 @@ public class HelloController {
     ImageView[][] GridBoardImg; // для розставлення фото у grid-і
 
     @FXML
-    void button_menu(ActionEvent event) {
-        Button btn = (Button) event.getSource();
-    }
-
-    @FXML
     void mouse_clicked(MouseEvent event) { // реакція програми на натискання на зображення
         ImageView clicked_img = (ImageView) event.getSource();
 
