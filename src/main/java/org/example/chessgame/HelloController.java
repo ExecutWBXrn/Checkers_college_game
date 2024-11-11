@@ -12,20 +12,26 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 public class HelloController {
-    boolean isWhite = true;
+    boolean isWhite = false; // положення білих фігур
 
-    int white = -1, black = -1;
+    int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
 
-    Image white_fig_img;
+    Image white_fig_img; // імпорт фото шашок
     Image black_fig_img;
+
+    Image[] white_black; // для методу dry(неповторятись)
 
     Image pointer = new Image(getClass().getResource("img/standart_pack/pointer.png").toExternalForm(), true);
 
-    int pointerCoords[][] = new int[3][2];
+    int pointerCoords[][] = new int[3][2]; //
 
     int getRowFigure;
     int getColFigure;
+
+    boolean isAttack=false; // перевірка атаки, для запуску функції на pointer-и
+
+
 
     @FXML
     private ResourceBundle resources;
@@ -132,7 +138,7 @@ public class HelloController {
     @FXML
     private ImageView img7_7;
 
-    int[][] GridPosition = new int[][] {
+    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
             {1, 0, 1, 0, 1, 0, 1, 0},
             {0, 1, 0, 1, 0, 1, 0, 1},
             {1, 0, 1, 0, 1, 0, 1, 0},
@@ -143,7 +149,7 @@ public class HelloController {
             {0, 2, 0, 2, 0, 2, 0, 2}
     };
 
-    ImageView[][] GridBoardImg;
+    ImageView[][] GridBoardImg; // для розставлення фото у grid-і
 
     @FXML
     void button_menu(ActionEvent event) {
@@ -151,7 +157,7 @@ public class HelloController {
     }
 
     @FXML
-    void mouse_clicked(MouseEvent event) {
+    void mouse_clicked(MouseEvent event) { // реакція програми на натискання на зображення
         ImageView clicked_img = (ImageView) event.getSource();
 
         int getRowIndex = GridPane.getRowIndex(clicked_img) == null ? 0 : GridPane.getRowIndex(clicked_img);
@@ -160,7 +166,7 @@ public class HelloController {
         pointerCoords[0][0]=getRowIndex;
         pointerCoords[0][1]=getColIndex;
 
-        if(clicked_img.getImage()==white_fig_img || clicked_img.getImage()==black_fig_img) {
+        if(clicked_img.getImage()==white_fig_img || clicked_img.getImage()==black_fig_img) { // реагує тільки якщо клацнуто на фігуру
             int spot_row_level = 0;
             int type = getTypeOfFigure(getRowIndex, getColIndex);
             getRowFigure = getRowIndex;
@@ -184,25 +190,29 @@ public class HelloController {
 
             System.out.println(getRowIndex + " " + getColIndex + " " + spot_of_color);
 
+            clear_board_of_pointer();
+            isAttack=false;
+            setDefaultAttackPointer(getRowIndex, getColIndex, spot_of_color);
             setDefaultPointer(spot_of_color, getRowIndex, getColIndex, spot_row_level);
-        } else if (clicked_img.getImage()==pointer) {
+        } else if (clicked_img.getImage()==pointer) { // якщо на pointer
             System.out.println(true);
             setDefaultStep(getRowIndex, getColIndex, clicked_img);
-        } else clear_board_of_pointer();
+        } else clear_board_of_pointer(); // якщо на порожню клітинку
     }
 
     @FXML
-    void initialize() {
+    void initialize() { // ініціалізатор, код що виконується один раз при запуску програми
         white_fig_img = new Image(getClass().getResource("img/standart_pack/white_figure.png").toExternalForm(), true);
         black_fig_img = new Image(getClass().getResource("img/standart_pack/black_figure.png").toExternalForm(), true);
 
-
+        white_black = new Image[]{white_fig_img, black_fig_img};
         Image[] img_figure = isWhite ? new Image[] {white_fig_img, black_fig_img} : new Image[] {black_fig_img, white_fig_img};
+
 
         white = isWhite == true ? 2 : 1;
         black = isWhite != true ? 2 : 1;
 
-        GridBoardImg = new ImageView[][]{
+        GridBoardImg = new ImageView[][]{ // заповнення зображеннями grid
                 {img0_0, null, img0_2, null, img0_4, null, img0_6, null},
                 {null, img1_1, null, img1_3, null, img1_5, null, img1_7},
                 {img2_0, null, img2_2, null, img2_4, null, img2_6, null},
@@ -213,7 +223,7 @@ public class HelloController {
                 {null, img7_1, null, img7_3, null, img7_5, null, img7_7}
         };
 
-        int img_row = 0;
+        int img_row = 0; // розставлення білих/чорних фігур
         int img_col, img_first=1;
         for(ImageView[] i: GridBoardImg){
             img_col=0;
@@ -229,7 +239,7 @@ public class HelloController {
     }
 
 
-    protected void clear_board_of_pointer(){
+    protected void clear_board_of_pointer(){ // очищує від pointer-ів
         int row = 0, col;
         for(ImageView[] i: GridBoardImg){
             col=0;
@@ -245,12 +255,13 @@ public class HelloController {
         }
     }
 
-    protected int getTypeOfFigure(int row, int col){
+    protected int getTypeOfFigure(int row, int col){ // отримує тип фігури(1, 2, 3, 4)
         return GridPosition[row][col];
     }
 
-    private void setDefaultPointer(String spot_of_color, int row, int col, int spot_row){
-        clear_board_of_pointer();
+    private void setDefaultPointer(String spot_of_color, int row, int col, int spot_row){ // встановлення стандартних pointer-ів.
+        if(isAttack) return;
+        System.out.println("isAtk? " + isAttack);
         if(!spot_of_color.equals("NNone") && ((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black"))){
             try {
                 if(GridPosition[row-spot_row][col+1]==0){
@@ -271,18 +282,62 @@ public class HelloController {
         }
     }
 
-    private void setDefaultStep(int row, int col, ImageView img){
-        clear_board_of_pointer();
-        GridBoardImg[getRowFigure][getColFigure].setImage(null);
-        GridPosition[row][col] = GridPosition[getRowFigure][getColFigure];
-        GridPosition[getRowFigure][getColFigure]=0;
-        if(step%2==0){
-            img.setImage(white_fig_img);
-        } else img.setImage(black_fig_img);
-        step++;
+    private void setDefaultAttackPointer(int row, int col, String spot_of_color){ // здійснення атак відносно клітинок навкруг
+        isAttack=false;
+        if (!((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black"))) return; // перевірка чи шашка на чужому ході не хоче побити свою
+        try{
+            if(GridBoardImg[row+1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col+2)){
+                GridBoardImg[row+2][col+2].setImage(pointer);
+                setDefaultAttackPointer(row+2, col+2, spot_of_color);
+                isAttack=true;
+            }
+        } catch (Exception e){};
+        try{
+            if(GridBoardImg[row+1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col-2)){
+                GridBoardImg[row+2][col-2].setImage(pointer);
+                setDefaultAttackPointer(row+2, col-2, spot_of_color);
+                isAttack=true;
+            }
+        } catch (Exception e){};
+        try{
+            if(GridBoardImg[row-1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col+2)){
+                GridBoardImg[row-2][col+2].setImage(pointer);
+                setDefaultAttackPointer(row-2, col+2, spot_of_color);
+                isAttack=true;
+            }
+        } catch (Exception e){};
+        try{
+            if(GridBoardImg[row-1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col-2)){
+                GridBoardImg[row-2][col-2].setImage(pointer);
+                setDefaultAttackPointer(row-2, col-2, spot_of_color);
+                isAttack=true;
+            }
+        } catch (Exception e){};
     }
 
-    private void TrackPosition(){
+    private boolean getSecAttack(int row, int col){ // умова для перегляду можливості проведення другої атаки підряд
+        try {
+            return GridBoardImg[row][col].getImage()==null;
+        } catch (Exception e){};
+        return false;
+    }
+
+    private void setDefaultStep(int row, int col, ImageView img){ // переміщує шашку на pointer
+        clear_board_of_pointer();
+        GridBoardImg[getRowFigure][getColFigure].setImage(null); // ставить попередній клік порожнім
+        GridPosition[row][col] = GridPosition[getRowFigure][getColFigure]; // робить теперішню клітинку зайнятою
+        GridPosition[getRowFigure][getColFigure]=0; // робить попередній клік порожнім
+        img.setImage(white_black[step%2 == 0 ? 0 : 1]); // умова відносно кроку ставить чорну, або ж білу шашку
+        if(isAttack) setDefaultAttackStep();
+        step++;
+        TrackPosition();
+    }
+
+    private void setDefaultAttackStep(){
+        System.out.println();
+    }
+
+    private void TrackPosition(){ // функція для моніторингу дошки
         for(int i[]: GridPosition){
             for(int j: i){
                 System.out.print(j + " ");
