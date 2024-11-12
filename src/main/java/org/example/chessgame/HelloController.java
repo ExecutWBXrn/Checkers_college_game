@@ -298,7 +298,7 @@ public class HelloController {
                 isAttack=true;
                 return true;
             }
-        } catch (Exception e){ return false; };
+        } catch (Exception e){};
         try{
             if(GridBoardImg[row+1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col-2)){
                 GridBoardImg[row+2][col-2].setImage(pointer);
@@ -309,7 +309,7 @@ public class HelloController {
                 isAttack=true;
                 return true;
             }
-        } catch (Exception e){ return false; };
+        } catch (Exception e){};
         try{
             if(GridBoardImg[row-1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col+2)){
                 GridBoardImg[row-2][col+2].setImage(pointer);
@@ -320,7 +320,7 @@ public class HelloController {
                 isAttack=true;
                 return true;
             }
-        } catch (Exception e){ return false; };
+        } catch (Exception e){};
         try{
             if(GridBoardImg[row-1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col-2)){
                 GridBoardImg[row-2][col-2].setImage(pointer);
@@ -331,7 +331,7 @@ public class HelloController {
                 isAttack=true;
                 return true;
             }
-        } catch (Exception e){ return false; };
+        } catch (Exception e){};
         return false;
     }
 
