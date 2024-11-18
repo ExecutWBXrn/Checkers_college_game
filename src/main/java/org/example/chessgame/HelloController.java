@@ -17,6 +17,9 @@ public class HelloController {
     int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
 
+    int attack_figure;
+    int defence_figure;
+
     Image white_fig_img; // імпорт фото шашок
     Image black_fig_img;
 
@@ -32,15 +35,51 @@ public class HelloController {
 
     boolean isAttack=false; // перевірка атаки, для запуску функції на pointer-и
 
-    int[][] GridAttacker = new int[][]{
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
+    int GridAttackerNum = 0;
+
+    int[][] GridAttackerCoords;
+
+    int[][][] GridAttacker = new int[][][]{
+            {
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+            },
+            {
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+            },
+            {
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+            },
+            {
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0},
+            }
     };
 
     @FXML
@@ -148,27 +187,29 @@ public class HelloController {
     @FXML
     private ImageView img7_7;
 
-//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 1, 0, 1, 0, 1, 0, 1},
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2},
-//            {2, 0, 2, 0, 2, 0, 2, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2}
-//    };
+    String spot_of_color = "NNone";
 
     int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-            {0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 1, 0, 0},
-            {0, 0, 2, 0, 0, 0, 0, 0},
-            {0, 0, 0, 2, 0, 0, 0, 0},
-            {0, 0, 0, 0, 2, 0, 0, 0},
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0}
+            {0, 2, 0, 2, 0, 2, 0, 2},
+            {2, 0, 2, 0, 2, 0, 2, 0},
+            {0, 2, 0, 2, 0, 2, 0, 2}
     };
+
+//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0}
+//    };
 
     ImageView[][] GridBoardImg; // для розставлення фото у grid-і
 
@@ -182,6 +223,8 @@ public class HelloController {
         pointerCoords[0][0]=getRowIndex;
         pointerCoords[0][1]=getColIndex;
 
+        GridAttackerNum=0;
+
         if(clicked_img.getImage()==white_fig_img || clicked_img.getImage()==black_fig_img) { // реагує тільки якщо клацнуто на фігуру
             int spot_row_level = 0;
             int type = getTypeOfFigure(getRowIndex, getColIndex);
@@ -189,7 +232,6 @@ public class HelloController {
             getColFigure = getColIndex;
             boolean isLady = false;
 
-            String spot_of_color = "NNone";
             if (type == white) {
                 spot_of_color = "White";
                 spot_row_level = isWhite ? 1 : -1;
@@ -211,7 +253,7 @@ public class HelloController {
             setDefaultPointer(spot_of_color, getRowIndex, getColIndex, spot_row_level);
         } else if (clicked_img.getImage()==pointer) { // якщо на pointer
             System.out.println(true);
-            setDefaultStep(getRowIndex, getColIndex, clicked_img);
+            setDefaultStep(getRowIndex, getColIndex, clicked_img, spot_of_color);
         } else clear_board_of_pointer(); // якщо на порожню клітинку
     }
 
@@ -226,6 +268,18 @@ public class HelloController {
 
         white = isWhite == true ? 2 : 1;
         black = isWhite != true ? 2 : 1;
+
+        GridAttackerNum=0;
+
+        attack_figure = step%2==0 ? white : black;
+        defence_figure = attack_figure == white ? black : white;
+
+        GridAttackerCoords = new int[][]{
+                {0, 0},
+                {0, 0},
+                {0, 0},
+                {0, 0}
+        };
 
         GridBoardImg = new ImageView[][]{ // заповнення зображеннями grid
                 {img0_0, null, img0_2, null, img0_4, null, img0_6, null},
@@ -254,6 +308,7 @@ public class HelloController {
             }
             img_row++;
         }
+        System.out.println("isDATK?: " + isAroundDoubleAttack(3, 5, 0, 0));
     }
 
 
@@ -302,51 +357,68 @@ public class HelloController {
 
     private boolean setDefaultAttackPointer(int row, int col, String spot_of_color){ // здійснення атак відносно клітинок навкруг
         if (!((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black"))) return false; // перевірка чи шашка на чужому ході не хоче побити свою
+        boolean res = false;
         try{
             if(GridBoardImg[row+1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col+2)){
                 GridBoardImg[row+2][col+2].setImage(pointer);
-                if(setDefaultAttackPointer(row+2, col+2, spot_of_color)){
-                    GridBoardImg[row+2][col+2].setImage(pointer2);
-                }
-                GridAttacker[row+1][col+1]=1;
+                GridAttacker[GridAttackerNum][row+1][col+1]=1;
                 isAttack=true;
-                return true;
+                res = true;
+                if(!isAroundDoubleAttack(row, col, 2, 2) && setDefaultAttackPointer(row+2, col+2, spot_of_color)){
+                    GridBoardImg[row+2][col+2].setImage(pointer2);
+                } else {
+                    GridAttackerCoords[GridAttackerNum][0]=row+2;
+                    GridAttackerCoords[GridAttackerNum][1]=col+2;
+                    GridAttackerNum++;
+                }
             }
         } catch (Exception e){};
         try{
             if(GridBoardImg[row+1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col-2)){
                 GridBoardImg[row+2][col-2].setImage(pointer);
-                if(setDefaultAttackPointer(row+2, col-2, spot_of_color)){
-                    GridBoardImg[row+2][col-2].setImage(pointer2);
-                }
-                GridAttacker[row+1][col-1]=1;
+                GridAttacker[GridAttackerNum][row+1][col-1]=1;
                 isAttack=true;
-                return true;
+                res = true;
+                if(!isAroundDoubleAttack(row, col, 2, -2) && setDefaultAttackPointer(row+2, col-2, spot_of_color)){
+                    GridBoardImg[row+2][col-2].setImage(pointer2);
+                } else {
+                    GridAttackerCoords[GridAttackerNum][0]=row+2;
+                    GridAttackerCoords[GridAttackerNum][1]=col-2;
+                    GridAttackerNum++;
+                }
             }
         } catch (Exception e){};
         try{
             if(GridBoardImg[row-1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col+2)){
                 GridBoardImg[row-2][col+2].setImage(pointer);
-                if(setDefaultAttackPointer(row-2, col+2, spot_of_color)){
-                    GridBoardImg[row-2][col+2].setImage(pointer2);
-                }
-                GridAttacker[row-1][col+1]=1;
+                GridAttacker[GridAttackerNum][row-1][col+1]=1;
                 isAttack=true;
-                return true;
+                res = true;
+                if(!isAroundDoubleAttack(row, col, -2, 2) && setDefaultAttackPointer(row-2, col+2, spot_of_color)){
+                    GridBoardImg[row-2][col+2].setImage(pointer2);
+                } else {
+                    GridAttackerCoords[GridAttackerNum][0]=row-2;
+                    GridAttackerCoords[GridAttackerNum][1]=col+2;
+                    GridAttackerNum++;
+                }
             }
         } catch (Exception e){};
         try{
             if(GridBoardImg[row-1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col-2)){
                 GridBoardImg[row-2][col-2].setImage(pointer);
-                if(setDefaultAttackPointer(row-2, col-2, spot_of_color)){
-                    GridBoardImg[row-2][col-2].setImage(pointer2);
-                }
-                GridAttacker[row-1][col-1]=1;
+                GridAttacker[GridAttackerNum][row-1][col-1]=1;
                 isAttack=true;
-                return true;
+                res = true;
+                if(!isAroundDoubleAttack(row, col, -2, -2) && setDefaultAttackPointer(row-2, col-2, spot_of_color)){
+                    GridBoardImg[row-2][col-2].setImage(pointer2);
+                } else {
+                    GridAttackerCoords[GridAttackerNum][0]=row-2;
+                    GridAttackerCoords[GridAttackerNum][1]=col-2;
+                    GridAttackerNum++;
+                }
             }
         } catch (Exception e){};
-        return false;
+        return res;
     }
 
     private boolean getSecAttack(int row, int col){ // умова для перегляду можливості проведення другої атаки підряд
@@ -356,19 +428,32 @@ public class HelloController {
         return false;
     }
 
-    private void setDefaultStep(int row, int col, ImageView img){ // переміщує шашку на pointer
+    private void setDefaultStep(int row, int col, ImageView img, String spot_of_fig){ // переміщує шашку на pointer
         clear_board_of_pointer();
         GridBoardImg[getRowFigure][getColFigure].setImage(null); // ставить попередній клік порожнім
         GridPosition[row][col] = GridPosition[getRowFigure][getColFigure]; // робить теперішню клітинку зайнятою
         GridPosition[getRowFigure][getColFigure]=0; // робить попередній клік порожнім
         img.setImage(white_black[step%2 == 0 ? 0 : 1]); // умова відносно кроку ставить чорну, або ж білу шашку
-        delete_figure();
-        step++;
+        TrackPosition(GridAttacker[0]);
+        TrackPosition(GridAttacker[1]);
+        TrackPosition(GridAttacker[2]);
+        TrackPosition(GridAttacker[3]);
+        delete_figure(row, col);
         TrackPosition(GridPosition);
         isAttack=false;
+        if(isAroundDoubleAttack(row, col, 0, 0)){
+            getRowFigure=row;
+            getColFigure=col;
+            setDefaultAttackPointer(row, col, spot_of_fig);
+        } else{
+            step++;
+            attack_figure = step%2==0 ? white : black;
+            defence_figure = attack_figure == white ? black : white;
+        }
     }
 
     private void TrackPosition(int[][] Grid){ // функція для моніторингу дошки
+        System.out.println("/////////////////////////////////////");
         for(int i[]: Grid){
             for(int j: i){
                 System.out.print(j + " ");
@@ -379,8 +464,6 @@ public class HelloController {
 
     private boolean thereIsNoAttack(String spot_of_color){
         if ((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black")){
-            int attack_figure = step%2==0 ? white : black;
-            int defence_figure = attack_figure == white ? black : white;
             int row=0, col;
             for(int i[]: GridPosition){
                 col=0;
@@ -415,19 +498,67 @@ public class HelloController {
         return false;
     }
 
-    private void delete_figure(){
+    private boolean isAroundDoubleAttack(int row, int col, int at_row, int at_col){
+        boolean res = false;
+        int n = 0;
+        try{
+            if(GridPosition[row+at_row+1][col+at_col+1]==defence_figure && GridPosition[row+at_row+2][col+at_col+2]==0){
+                n++;
+            }
+        }catch (Exception e){};
+        System.out.println("n: " + n);
+        try{
+            if(GridPosition[row+at_row+1][col+at_col-1]==defence_figure && GridPosition[row+at_row+2][col+at_col-2]==0){
+                n++;
+            }
+        }catch (Exception e){};
+        System.out.println("n: " + n);
+        try{
+            if(GridPosition[row+at_row-1][col+at_col+1]==defence_figure && GridPosition[row+at_row-2][col+at_col+2]==0){
+                n++;
+            }
+        }catch (Exception e){};
+        System.out.println("n: " + n);
+        try{
+            if(GridPosition[row+at_row-1][col+at_col-1]==defence_figure && GridPosition[row+at_row-2][col+at_col-2]==0){
+                n++;
+            }
+        }catch (Exception e){};
+        System.out.println("n: " + n);
+        if(n>=2) res = true;
+        return res;
+    }
+
+    private void delete_figure(int out_row, int out_col){
+        int n=0;
+        for(int[] i: GridAttackerCoords){
+            if(i[0]==out_row && i[1]==out_col){
+                GridAttackerNum=n;
+            }
+            n++;
+        }
         int row=0, col;
-        for(int[] i: GridAttacker){
+        for(int[] i: GridAttacker[GridAttackerNum]){
             col=0;
             for(int j: i){
                 if(j==1) {
                     GridBoardImg[row][col].setImage(null);
-                    GridAttacker[row][col]=0;
                     GridPosition[row][col]=0;
                 }
+                GridAttacker[0][row][col]=0;
+                GridAttacker[1][row][col]=0;
+                GridAttacker[2][row][col]=0;
+                GridAttacker[3][row][col]=0;
                 col++;
             }
             row++;
         }
+        GridAttackerCoords = new int[][]{
+                {0, 0},
+                {0, 0},
+                {0, 0},
+                {0, 0}
+        };
+        GridAttackerNum=0;
     }
 }
