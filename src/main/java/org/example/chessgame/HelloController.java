@@ -148,15 +148,26 @@ public class HelloController {
     @FXML
     private ImageView img7_7;
 
+//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {1, 0, 1, 0, 1, 0, 1, 0},
+//            {0, 1, 0, 1, 0, 1, 0, 1},
+//            {1, 0, 1, 0, 1, 0, 1, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 2, 0, 2, 0, 2, 0, 2},
+//            {2, 0, 2, 0, 2, 0, 2, 0},
+//            {0, 2, 0, 2, 0, 2, 0, 2}
+//    };
+
     int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-            {1, 0, 1, 0, 1, 0, 1, 0},
-            {0, 1, 0, 1, 0, 1, 0, 1},
-            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 1, 0, 0},
+            {0, 0, 2, 0, 0, 0, 0, 0},
+            {0, 0, 0, 2, 0, 0, 0, 0},
+            {0, 0, 0, 0, 2, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2},
-            {2, 0, 2, 0, 2, 0, 2, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2}
+            {0, 0, 0, 0, 0, 0, 0, 0}
     };
 
     ImageView[][] GridBoardImg; // для розставлення фото у grid-і
@@ -227,30 +238,33 @@ public class HelloController {
                 {null, img7_1, null, img7_3, null, img7_5, null, img7_7}
         };
 
-        int img_row = 0; // розставлення білих/чорних фігур
-        int img_col, img_first=1;
-        for(ImageView[] i: GridBoardImg){
+        int img_row = 0, img_col; // розставлення білих/чорних фігур
+        for(int[] i: GridPosition){
             img_col=0;
-            if(img_row<=2 || img_row>=5){
-                for(ImageView j: i){
-                    if(j!=null) j.setImage(img_figure[img_first]);
-                    img_col++;
+            for(int j: i){
+                if(j!=0){
+                    System.out.println(img_row + " " + img_col);
+                    if(j==white){
+                        GridBoardImg[img_row][img_col].setImage(white_fig_img);
+                    } else if (j==black) {
+                        GridBoardImg[img_row][img_col].setImage(black_fig_img);
+                    }
                 }
+                img_col++;
             }
             img_row++;
-            if(img_row==4) img_first=0;
         }
     }
 
 
     protected void clear_board_of_pointer(){ // очищує від pointer-ів
         int row = 0, col;
-        for(ImageView[] i: GridBoardImg){
+        for(int[] i: GridPosition){
             col=0;
-            for(ImageView j: i){
+            for(int j: i){
                 if(GridPosition[row][col]==0){
                     try{
-                        j.setImage(null);
+                        GridBoardImg[row][col].setImage(null);
                     }catch (Exception e){};
                 }
                 col++;
