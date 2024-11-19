@@ -14,26 +14,54 @@ import javafx.scene.layout.GridPane;
 public class HelloController {
     boolean isWhite = true; // положення білих фігур
 
+//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {1, 0, 1, 0, 1, 0, 1, 0},
+//            {0, 1, 0, 1, 0, 1, 0, 1},
+//            {1, 0, 1, 0, 1, 0, 1, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 2, 0, 2, 0, 2, 0, 2},
+//            {2, 0, 2, 0, 2, 0, 2, 0},
+//            {0, 2, 0, 2, 0, 2, 0, 2}
+//    };
+
+    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0},
+            {0, 0, 0, 0, 3, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
     int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
 
     int attack_figure;
     int defence_figure;
+    int attack_lady;
+    int defence_lady;
 
     Image white_fig_img; // імпорт фото шашок
     Image black_fig_img;
+    Image white_lady_img = new Image(getClass().getResource("img/standart_pack/white_lady.png").toExternalForm(), true);
+    Image black_lady_img = new Image(getClass().getResource("img/standart_pack/black_lady.png").toExternalForm(), true);
 
     Image[] white_black; // для методу dry(неповторятись)
+    Image[] white_black_lady;
 
     Image pointer = new Image(getClass().getResource("img/standart_pack/pointer.png").toExternalForm(), true);
     Image pointer2 = new Image(getClass().getResource("img/standart_pack/pointer2.png").toExternalForm(), true);
-
+    Image lady_pointer = new Image(getClass().getResource("img/standart_pack/lady_pointer.png").toExternalForm(), true);
     int pointerCoords[][] = new int[3][2]; //
 
     int getRowFigure;
     int getColFigure;
 
     boolean isAttack=false; // перевірка атаки, для запуску функції на pointer-и
+    boolean isAttackForAnyAttackFunc=false;
 
     int GridAttackerNum = 0;
 
@@ -189,28 +217,6 @@ public class HelloController {
 
     String spot_of_color = "NNone";
 
-    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-            {1, 0, 1, 0, 1, 0, 1, 0},
-            {0, 1, 0, 1, 0, 1, 0, 1},
-            {1, 0, 1, 0, 1, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2},
-            {2, 0, 2, 0, 2, 0, 2, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2}
-    };
-
-//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0}
-//    };
-
     ImageView[][] GridBoardImg; // для розставлення фото у grid-і
 
     @FXML
@@ -225,12 +231,12 @@ public class HelloController {
 
         GridAttackerNum=0;
 
+        int spot_row_level = 0;
+        int type = getTypeOfFigure(getRowIndex, getColIndex);
+
         if(clicked_img.getImage()==white_fig_img || clicked_img.getImage()==black_fig_img) { // реагує тільки якщо клацнуто на фігуру
-            int spot_row_level = 0;
-            int type = getTypeOfFigure(getRowIndex, getColIndex);
             getRowFigure = getRowIndex;
             getColFigure = getColIndex;
-            boolean isLady = false;
 
             if (type == white) {
                 spot_of_color = "White";
@@ -238,23 +244,26 @@ public class HelloController {
             } else if (type == black) {
                 spot_of_color = "Black";
                 spot_row_level = isWhite ? -1 : 1;
-            } else if (type == 3) {
-                spot_of_color = "White";
-                isLady = true;
-            } else if (type == 4) {
-                spot_of_color = "Black";
-                isLady = true;
-            } else return;
+            }
 
             System.out.println(getRowIndex + " " + getColIndex + " " + spot_of_color);
 
             clear_board_of_pointer();
             setDefaultAttackPointer(getRowIndex, getColIndex, spot_of_color);
             setDefaultPointer(spot_of_color, getRowIndex, getColIndex, spot_row_level);
+        } else if (clicked_img.getImage()==white_lady_img || clicked_img.getImage()==black_lady_img) {
+            getRowFigure = getRowIndex;
+            getColFigure = getColIndex;
+
+            clear_board_of_pointer();
+            setDefaultLadyAttack(getRowIndex, getColIndex);
+            setDefaultLadyPointer(getRowFigure, getColFigure);
         } else if (clicked_img.getImage()==pointer) { // якщо на pointer
             System.out.println(true);
             setDefaultStep(getRowIndex, getColIndex, clicked_img, spot_of_color);
-        } else clear_board_of_pointer(); // якщо на порожню клітинку
+        } else if (clicked_img.getImage()==lady_pointer) {
+            setDefaultLadyStep(getRowIndex, getColIndex, clicked_img);
+        } else {clear_board_of_pointer();} // якщо на порожню клітинку
     }
 
     @FXML
@@ -263,6 +272,7 @@ public class HelloController {
         black_fig_img = new Image(getClass().getResource("img/standart_pack/black_figure.png").toExternalForm(), true);
 
         white_black = new Image[]{white_fig_img, black_fig_img};
+        white_black_lady = new Image[]{white_lady_img, black_lady_img};
         Image[] img_figure = isWhite ? new Image[] {white_fig_img, black_fig_img} : new Image[] {black_fig_img, white_fig_img};
 
 
@@ -273,6 +283,8 @@ public class HelloController {
 
         attack_figure = step%2==0 ? white : black;
         defence_figure = attack_figure == white ? black : white;
+        attack_lady = step%2==0 ? 3 : 4;
+        defence_lady = step%2==0 ? 4 : 3;
 
         GridAttackerCoords = new int[][]{
                 {0, 0},
@@ -302,6 +314,10 @@ public class HelloController {
                         GridBoardImg[img_row][img_col].setImage(white_fig_img);
                     } else if (j==black) {
                         GridBoardImg[img_row][img_col].setImage(black_fig_img);
+                    } else if (j==3) {
+                        GridBoardImg[img_row][img_col].setImage(white_lady_img);
+                    } else if (j==4) {
+                        GridBoardImg[img_row][img_col].setImage(black_lady_img);
                     }
                 }
                 img_col++;
@@ -359,10 +375,11 @@ public class HelloController {
         if (!((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black"))) return false; // перевірка чи шашка на чужому ході не хоче побити свою
         boolean res = false;
         try{
-            if(GridBoardImg[row+1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col+2)){
+            if((GridBoardImg[row+1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] | GridBoardImg[row+1][col+1].getImage()==white_black_lady[step%2 == 0 ? 1 : 0]) && getSecAttack(row+2, col+2)){
                 GridBoardImg[row+2][col+2].setImage(pointer);
                 GridAttacker[GridAttackerNum][row+1][col+1]=1;
                 isAttack=true;
+                isAttackForAnyAttackFunc=true;
                 res = true;
                 if(!isAroundDoubleAttack(row, col, 2, 2) && setDefaultAttackPointer(row+2, col+2, spot_of_color)){
                     GridBoardImg[row+2][col+2].setImage(pointer2);
@@ -374,11 +391,12 @@ public class HelloController {
             }
         } catch (Exception e){};
         try{
-            if(GridBoardImg[row+1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row+2, col-2)){
+            if((GridBoardImg[row+1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] | GridBoardImg[row+1][col-1].getImage()==white_black_lady[step%2 == 0 ? 1 : 0]) && getSecAttack(row+2, col-2)){
                 GridBoardImg[row+2][col-2].setImage(pointer);
                 GridAttacker[GridAttackerNum][row+1][col-1]=1;
                 isAttack=true;
                 res = true;
+                isAttackForAnyAttackFunc=true;
                 if(!isAroundDoubleAttack(row, col, 2, -2) && setDefaultAttackPointer(row+2, col-2, spot_of_color)){
                     GridBoardImg[row+2][col-2].setImage(pointer2);
                 } else {
@@ -389,11 +407,12 @@ public class HelloController {
             }
         } catch (Exception e){};
         try{
-            if(GridBoardImg[row-1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col+2)){
+            if((GridBoardImg[row-1][col+1].getImage()==white_black[step%2 == 0 ? 1 : 0] | GridBoardImg[row-1][col+1].getImage()==white_black_lady[step%2 == 0 ? 1 : 0]) && getSecAttack(row-2, col+2)){
                 GridBoardImg[row-2][col+2].setImage(pointer);
                 GridAttacker[GridAttackerNum][row-1][col+1]=1;
                 isAttack=true;
                 res = true;
+                isAttackForAnyAttackFunc=true;
                 if(!isAroundDoubleAttack(row, col, -2, 2) && setDefaultAttackPointer(row-2, col+2, spot_of_color)){
                     GridBoardImg[row-2][col+2].setImage(pointer2);
                 } else {
@@ -404,11 +423,12 @@ public class HelloController {
             }
         } catch (Exception e){};
         try{
-            if(GridBoardImg[row-1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] && getSecAttack(row-2, col-2)){
+            if((GridBoardImg[row-1][col-1].getImage()==white_black[step%2 == 0 ? 1 : 0] | GridBoardImg[row-1][col-1].getImage()==white_black_lady[step%2 == 0 ? 1 : 0]) && getSecAttack(row-2, col-2)){
                 GridBoardImg[row-2][col-2].setImage(pointer);
                 GridAttacker[GridAttackerNum][row-1][col-1]=1;
                 isAttack=true;
                 res = true;
+                isAttackForAnyAttackFunc=true;
                 if(!isAroundDoubleAttack(row, col, -2, -2) && setDefaultAttackPointer(row-2, col-2, spot_of_color)){
                     GridBoardImg[row-2][col-2].setImage(pointer2);
                 } else {
@@ -438,17 +458,21 @@ public class HelloController {
         TrackPosition(GridAttacker[1]);
         TrackPosition(GridAttacker[2]);
         TrackPosition(GridAttacker[3]);
+        turn_to_lady(row, col);
         delete_figure(row, col);
         TrackPosition(GridPosition);
         isAttack=false;
-        if(isAroundDoubleAttack(row, col, 0, 0)){
+        if(isAroundDoubleAttack(row, col, 0, 0) || isAroundAnyAttack(row, col)){
             getRowFigure=row;
             getColFigure=col;
             setDefaultAttackPointer(row, col, spot_of_fig);
         } else{
+            isAttackForAnyAttackFunc=false;
             step++;
             attack_figure = step%2==0 ? white : black;
             defence_figure = attack_figure == white ? black : white;
+            attack_lady = step%2==0 ? 3 : 4;
+            defence_lady = step%2==0 ? 4 : 3;
         }
     }
 
@@ -470,22 +494,22 @@ public class HelloController {
                 for(int j: i){
                     if(j==attack_figure){
                         try{
-                            if(GridPosition[row+1][col+1]==defence_figure && GridPosition[row+2][col+2]==0){
+                            if((GridPosition[row+1][col+1]==defence_figure | GridPosition[row+1][col+1]==defence_lady) && GridPosition[row+2][col+2]==0){
                                 return true;
                             }
                         } catch (Exception e){};
                         try{
-                            if(GridPosition[row+1][col-1]==defence_figure && GridPosition[row+2][col-2]==0){
+                            if((GridPosition[row+1][col-1]==defence_figure | GridPosition[row+1][col-1]==defence_lady) && GridPosition[row+2][col-2]==0){
                                 return true;
                             }
                         } catch (Exception e){};
                         try{
-                            if(GridPosition[row-1][col+1]==defence_figure && GridPosition[row-2][col+2]==0){
+                            if((GridPosition[row-1][col+1]==defence_figure | GridPosition[row-1][col+1]==defence_lady) && GridPosition[row-2][col+2]==0){
                                 return true;
                             }
                         } catch (Exception e){};
                         try{
-                            if(GridPosition[row-1][col-1]==defence_figure && GridPosition[row-2][col-2]==0){
+                            if((GridPosition[row-1][col-1]==defence_figure | GridPosition[row-1][col-1]==defence_lady) && GridPosition[row-2][col-2]==0){
                                 return true;
                             }
                         } catch (Exception e){};
@@ -498,35 +522,73 @@ public class HelloController {
         return false;
     }
 
+    private boolean isAroundAnyAttack(int row, int col){
+        if(!isAttackForAnyAttackFunc) return false;
+        try{
+            if((GridPosition[row+1][col+1]==defence_figure | GridPosition[row+1][col+1]==defence_lady) && GridPosition[row+2][col+2]==0){
+                return true;
+            }
+        }catch (Exception e){};
+        try{
+            if((GridPosition[row+1][col-1]==defence_figure | GridPosition[row+1][col-1]==defence_lady) && GridPosition[row+2][col-2]==0){
+                return true;
+            }
+        }catch (Exception e){};
+        try{
+            if((GridPosition[row-1][col+1]==defence_figure | GridPosition[row-1][col+1]==defence_lady) && GridPosition[row-2][col+2]==0){
+                return true;
+            }
+        }catch (Exception e){};
+        try{
+            if((GridPosition[row-1][col-1]==defence_figure | GridPosition[row-1][col-1]==defence_lady) && GridPosition[row-2][col-2]==0){
+                return true;
+            }
+        }catch (Exception e){};
+        return false;
+    }
+
     private boolean isAroundDoubleAttack(int row, int col, int at_row, int at_col){
         boolean res = false;
         int n = 0;
         try{
-            if(GridPosition[row+at_row+1][col+at_col+1]==defence_figure && GridPosition[row+at_row+2][col+at_col+2]==0){
+            if((GridPosition[row+at_row+1][col+at_col+1]==defence_figure | GridPosition[row+at_row+1][col+at_col+1]==defence_lady) && GridPosition[row+at_row+2][col+at_col+2]==0){
                 n++;
             }
         }catch (Exception e){};
         System.out.println("n: " + n);
         try{
-            if(GridPosition[row+at_row+1][col+at_col-1]==defence_figure && GridPosition[row+at_row+2][col+at_col-2]==0){
+            if((GridPosition[row+at_row+1][col+at_col-1]==defence_figure | GridPosition[row+at_row+1][col+at_col-1]==defence_lady) && GridPosition[row+at_row+2][col+at_col-2]==0){
                 n++;
             }
         }catch (Exception e){};
         System.out.println("n: " + n);
         try{
-            if(GridPosition[row+at_row-1][col+at_col+1]==defence_figure && GridPosition[row+at_row-2][col+at_col+2]==0){
+            if((GridPosition[row+at_row-1][col+at_col+1]==defence_figure | GridPosition[row+at_row-1][col+at_col+1]==defence_lady) && GridPosition[row+at_row-2][col+at_col+2]==0){
                 n++;
             }
         }catch (Exception e){};
         System.out.println("n: " + n);
         try{
-            if(GridPosition[row+at_row-1][col+at_col-1]==defence_figure && GridPosition[row+at_row-2][col+at_col-2]==0){
+            if((GridPosition[row+at_row-1][col+at_col-1]==defence_figure | GridPosition[row+at_row-1][col+at_col-1]==defence_lady) && GridPosition[row+at_row-2][col+at_col-2]==0){
                 n++;
             }
         }catch (Exception e){};
         System.out.println("n: " + n);
         if(n>=2) res = true;
         return res;
+    }
+
+    private void turn_to_lady(int row, int col){
+        int w_edge = white == 2 ? 0 : 7;
+        int b_edge = black == 2 ? 0 : 7;
+
+        if(row == w_edge && GridPosition[row][col]==white){
+            GridPosition[row][col]=3;
+            GridBoardImg[row][col].setImage(white_lady_img);
+        } else if (row == b_edge && GridPosition[row][col]==black){
+            GridPosition[row][col]=4;
+            GridBoardImg[row][col].setImage(black_lady_img);
+        }
     }
 
     private void delete_figure(int out_row, int out_col){
@@ -560,5 +622,99 @@ public class HelloController {
                 {0, 0}
         };
         GridAttackerNum=0;
+    }
+    // LADY CODE ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void setDefaultLadyPointer(int row, int col){
+        if((step%2==0 && GridPosition[row][col]==4) || (step%2==1 && GridPosition[row][col]==3)) return;
+        if(isAttack) return;
+        try{
+            for(int i=1; i<=7; i++){
+                if(GridPosition[row+i][col+i]==0){
+                    GridBoardImg[row+i][col+i].setImage(lady_pointer);
+                } else break;
+            }
+        } catch (Exception e){};
+        try{
+            for(int i=1; i<=7; i++){
+                if(GridPosition[row-i][col+i]==0){
+                    GridBoardImg[row-i][col+i].setImage(lady_pointer);
+                } else break;
+            }
+        } catch (Exception e){};
+        try{
+            for(int i=1; i<=7; i++){
+                if(GridPosition[row+i][col-i]==0){
+                    GridBoardImg[row+i][col-i].setImage(lady_pointer);
+                } else break;
+            }
+        } catch (Exception e){};
+        try{
+            for(int i=1; i<=7; i++){
+                if(GridPosition[row-i][col-i]==0){
+                    GridBoardImg[row-i][col-i].setImage(lady_pointer);
+                } else break;
+            }
+        } catch (Exception e){};
+    }
+
+    private void setDefaultLadyStep(int row, int col, ImageView img){
+        GridBoardImg[row][col].setImage(null);
+        GridPosition[row][col]=GridPosition[getRowFigure][getColFigure];
+        GridPosition[getRowFigure][getColFigure]=0;
+        img.setImage(white_black_lady[step%2==0 ? 0 : 1]);
+        step++;
+        attack_figure = step%2==0 ? white : black;
+        defence_figure = attack_figure == white ? black : white;
+        attack_lady = step%2==0 ? 3 : 4;
+        defence_lady = step%2==0 ? 4 : 3;
+        TrackPosition(GridPosition);
+        isAttack=false;
+        clear_board_of_pointer();
+    }
+
+    private void setDefaultLadyAttack(int row, int col){
+        if((step%2==0 && GridPosition[row][col]==4) || (step%2==1 && GridPosition[row][col]==3)) return;
+        boolean n;
+        try{
+            n=false;
+            for(int i=1; i<=7; i++){
+                if(n) GridBoardImg[row+i][col+i].setImage(lady_pointer);
+                if((GridPosition[row+i][col+i]==defence_figure || GridPosition[row+i][col+i]==defence_lady) && GridPosition[row+i+1][col+i+1]==0){
+                    n=true;
+                    isAttack=true;
+                }
+            }
+        } catch (Exception e){};
+        try{
+            n=false;
+            for(int i=1; i<=7; i++){
+                if(n) GridBoardImg[row+i][col-i].setImage(lady_pointer);
+                if((GridPosition[row+i][col-i]==defence_figure || GridPosition[row+i][col-i]==defence_lady) && GridPosition[row+i+1][col-i-1]==0){
+                    n=true;
+                    isAttack=true;
+                }
+            }
+        } catch (Exception e){};
+        try{
+            n=false;
+            for(int i=1; i<=7; i++){
+                if(n) GridBoardImg[row-i][col+i].setImage(lady_pointer);
+                if((GridPosition[row-i][col+i]==defence_figure || GridPosition[row-i][col+i]==defence_lady) && GridPosition[row-i-1][col+i+1]==0){
+                    n=true;
+                    isAttack=true;
+                }
+            }
+        } catch (Exception e){};
+        try{
+            n=false;
+            for(int i=1; i<=7; i++){
+                if(n) GridBoardImg[row-i][col-i].setImage(lady_pointer);
+                if((GridPosition[row-i][col-i]==defence_figure || GridPosition[row-i][col-i]==defence_lady) && GridPosition[row-i-1][col-i-1]==0){
+                    n=true;
+                    isAttack=true;
+                }
+            }
+        } catch (Exception e){};
     }
 }
