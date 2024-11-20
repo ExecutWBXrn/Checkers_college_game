@@ -14,27 +14,27 @@ import javafx.scene.layout.GridPane;
 public class HelloController {
     boolean isWhite = true; // положення білих фігур
 
-//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 1, 0, 1, 0, 1, 0, 1},
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2},
-//            {2, 0, 2, 0, 2, 0, 2, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2}
-//    };
-
     int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0},
-            {0, 0, 0, 0, 3, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0}
+            {0, 2, 0, 2, 0, 2, 0, 2},
+            {2, 0, 2, 0, 2, 0, 2, 0},
+            {0, 2, 0, 2, 0, 2, 0, 2}
     };
+
+//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 1, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 4, 0, 0},
+//            {0, 0, 0, 0, 3, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0}
+//    };
 
     int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
@@ -257,7 +257,7 @@ public class HelloController {
 
             clear_board_of_pointer();
             setDefaultLadyAttack(getRowIndex, getColIndex);
-            setDefaultLadyPointer(getRowFigure, getColFigure);
+            setDefaultLadyPointer(getRowIndex, getColIndex);
         } else if (clicked_img.getImage()==pointer) { // якщо на pointer
             System.out.println(true);
             setDefaultStep(getRowIndex, getColIndex, clicked_img, spot_of_color);
@@ -287,10 +287,10 @@ public class HelloController {
         defence_lady = step%2==0 ? 4 : 3;
 
         GridAttackerCoords = new int[][]{
-                {0, 0},
-                {0, 0},
-                {0, 0},
-                {0, 0}
+                {-1, -1},
+                {-1, -1},
+                {-1, -1},
+                {-1, -1}
         };
 
         GridBoardImg = new ImageView[][]{ // заповнення зображеннями grid
@@ -458,8 +458,8 @@ public class HelloController {
         TrackPosition(GridAttacker[1]);
         TrackPosition(GridAttacker[2]);
         TrackPosition(GridAttacker[3]);
-        turn_to_lady(row, col);
         delete_figure(row, col);
+        turn_to_lady(row, col);
         TrackPosition(GridPosition);
         isAttack=false;
         if(isAroundDoubleAttack(row, col, 0, 0) || isAroundAnyAttack(row, col)){
@@ -596,6 +596,7 @@ public class HelloController {
         for(int[] i: GridAttackerCoords){
             if(i[0]==out_row && i[1]==out_col){
                 GridAttackerNum=n;
+                System.out.println("GAN: " + GridAttackerNum);
             }
             n++;
         }
@@ -616,10 +617,10 @@ public class HelloController {
             row++;
         }
         GridAttackerCoords = new int[][]{
-                {0, 0},
-                {0, 0},
-                {0, 0},
-                {0, 0}
+                {-1, -1},
+                {-1, -1},
+                {-1, -1},
+                {-1, -1}
         };
         GridAttackerNum=0;
     }
