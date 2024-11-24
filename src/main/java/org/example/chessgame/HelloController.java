@@ -28,9 +28,9 @@ public class HelloController {
 //    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
 //            {0, 0, 0, 0, 0, 0, 0, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 1, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 4, 0, 0},
-//            {0, 0, 0, 0, 3, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0}
@@ -62,6 +62,36 @@ public class HelloController {
 
     boolean isAttack=false; // перевірка атаки, для запуску функції на pointer-и
     boolean isAttackForAnyAttackFunc=false;
+    int[][][] LadyAttackCoords = new int[][][]{
+            {
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+            },
+            {
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+            },
+            {
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+            },
+            {
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+                    {-1, -1},
+            },
+    };
 
     int GridAttackerNum = 0;
 
@@ -664,58 +694,183 @@ public class HelloController {
         GridPosition[row][col]=GridPosition[getRowFigure][getColFigure];
         GridPosition[getRowFigure][getColFigure]=0;
         img.setImage(white_black_lady[step%2==0 ? 0 : 1]);
-        step++;
-        attack_figure = step%2==0 ? white : black;
-        defence_figure = attack_figure == white ? black : white;
-        attack_lady = step%2==0 ? 3 : 4;
-        defence_lady = step%2==0 ? 4 : 3;
+        TrackPosition(GridAttacker[0]);
+        TrackPosition(GridAttacker[1]);
+        TrackPosition(GridAttacker[2]);
+        TrackPosition(GridAttacker[3]);
+        delete_figure_lady_edition(row, col);
         TrackPosition(GridPosition);
-        isAttack=false;
         clear_board_of_pointer();
+        if(!setDefaultLadyAttack(row, col)){
+            step++;
+            attack_figure = step%2==0 ? white : black;
+            defence_figure = attack_figure == white ? black : white;
+            attack_lady = step%2==0 ? 3 : 4;
+            defence_lady = step%2==0 ? 4 : 3;
+            isAttack=false;
+        } else clear_board_of_pointer();
     }
 
-    private void setDefaultLadyAttack(int row, int col){
-        if((step%2==0 && GridPosition[row][col]==4) || (step%2==1 && GridPosition[row][col]==3)) return;
+    private void delete_figure_lady_edition(int out_row, int out_col){
+        int n=0;
+        boolean out = false;
+        for(int[][] i: LadyAttackCoords){
+            for(int[] j: i){
+                if(j[0]==out_row && j[1]==out_col){
+                    GridAttackerNum=n;
+                    System.out.println("GAN: " + GridAttackerNum);
+                    out=true;
+                }
+            }
+            if(out) break;
+            n++;
+        }
+        int row=0, col;
+        for(int[] i: GridAttacker[GridAttackerNum]){
+            col=0;
+            for(int j: i){
+                if(j==1) {
+                    GridBoardImg[row][col].setImage(null);
+                    GridPosition[row][col]=0;
+                }
+                GridAttacker[0][row][col]=0;
+                GridAttacker[1][row][col]=0;
+                GridAttacker[2][row][col]=0;
+                GridAttacker[3][row][col]=0;
+                col++;
+            }
+            row++;
+        }
+        LadyAttackCoords = new int[][][]{
+                {
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                },
+                {
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                },
+                {
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                },
+                {
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                        {-1, -1},
+                },
+        };
+        GridAttackerNum=0;
+    }
+
+    private boolean setDefaultLadyAttack(int row, int col){
+        if((step%2==0 && GridPosition[row][col]==4) || (step%2==1 && GridPosition[row][col]==3)) return false;
         boolean n;
+        boolean res = false;
+        int count;
         try{
             n=false;
+            count=0;
             for(int i=1; i<=7; i++){
-                if(n) GridBoardImg[row+i][col+i].setImage(lady_pointer);
-                if((GridPosition[row+i][col+i]==defence_figure || GridPosition[row+i][col+i]==defence_lady) && GridPosition[row+i+1][col+i+1]==0){
+                if(n) {
+                    if(GridPosition[row+i][col+i]!=0){
+                        break;
+                    }
+                    LadyAttackCoords[GridAttackerNum-1][count][0]=row+i;
+                    LadyAttackCoords[GridAttackerNum-1][count][1]=col+i;
+                    System.out.println("LAC++r: " + LadyAttackCoords[GridAttackerNum-1][count][0]);
+                    System.out.println("LAC++c: " + LadyAttackCoords[GridAttackerNum-1][count][1]);
+                    count++;
+                    GridBoardImg[row+i][col+i].setImage(lady_pointer);
+                } else if((GridPosition[row+i][col+i]==defence_figure || GridPosition[row+i][col+i]==defence_lady) && GridPosition[row+i+1][col+i+1]==0){
                     n=true;
+                    res=true;
                     isAttack=true;
+                    GridAttacker[GridAttackerNum][row+i][col+i]=1;
+                    GridAttackerNum++;
                 }
             }
         } catch (Exception e){};
         try{
             n=false;
+            count=0;
             for(int i=1; i<=7; i++){
-                if(n) GridBoardImg[row+i][col-i].setImage(lady_pointer);
-                if((GridPosition[row+i][col-i]==defence_figure || GridPosition[row+i][col-i]==defence_lady) && GridPosition[row+i+1][col-i-1]==0){
+                if(n) {
+                    if(GridPosition[row+i][col-i]!=0){
+                        break;
+                    }
+                    LadyAttackCoords[GridAttackerNum-1][count][0]=row+i;
+                    LadyAttackCoords[GridAttackerNum-1][count][1]=col-i;
+                    System.out.println("LAC+-r: " + LadyAttackCoords[GridAttackerNum-1][count][0]);
+                    System.out.println("LAC+-c: " + LadyAttackCoords[GridAttackerNum-1][count][1]);
+                    count++;
+                    GridBoardImg[row+i][col-i].setImage(lady_pointer);
+                } else if((GridPosition[row+i][col-i]==defence_figure || GridPosition[row+i][col-i]==defence_lady) && GridPosition[row+i+1][col-i-1]==0){
                     n=true;
+                    res=true;
                     isAttack=true;
+                    GridAttacker[GridAttackerNum][row+i][col-i]=1;
+                    GridAttackerNum++;
                 }
             }
         } catch (Exception e){};
         try{
             n=false;
+            count=0;
             for(int i=1; i<=7; i++){
-                if(n) GridBoardImg[row-i][col+i].setImage(lady_pointer);
-                if((GridPosition[row-i][col+i]==defence_figure || GridPosition[row-i][col+i]==defence_lady) && GridPosition[row-i-1][col+i+1]==0){
+                if(n) {
+                    if(GridPosition[row-i][col+i]!=0){
+                        break;
+                    }
+                    LadyAttackCoords[GridAttackerNum-1][count][0]=row-i;
+                    LadyAttackCoords[GridAttackerNum-1][count][1]=col+i;
+                    System.out.println("LAC-+r: " + LadyAttackCoords[GridAttackerNum-1][count][0]);
+                    System.out.println("LAC-+c: " + LadyAttackCoords[GridAttackerNum-1][count][1]);
+                    count++;
+                    GridBoardImg[row-i][col+i].setImage(lady_pointer);
+                } else if((GridPosition[row-i][col+i]==defence_figure || GridPosition[row-i][col+i]==defence_lady) && GridPosition[row-i-1][col+i+1]==0){
                     n=true;
+                    res=true;
                     isAttack=true;
+                    GridAttacker[GridAttackerNum][row-i][col+i]=1;
+                    GridAttackerNum++;
                 }
             }
         } catch (Exception e){};
         try{
             n=false;
+            count=0;
             for(int i=1; i<=7; i++){
-                if(n) GridBoardImg[row-i][col-i].setImage(lady_pointer);
-                if((GridPosition[row-i][col-i]==defence_figure || GridPosition[row-i][col-i]==defence_lady) && GridPosition[row-i-1][col-i-1]==0){
+                if(n) {
+                    if(GridPosition[row-i][col-i]!=0){
+                        break;
+                    }
+                    LadyAttackCoords[GridAttackerNum-1][count][0]=row-i;
+                    LadyAttackCoords[GridAttackerNum-1][count][1]=col-i;
+                    System.out.println("LAC--r: " + LadyAttackCoords[GridAttackerNum-1][count][0]);
+                    System.out.println("LAC--c: " + LadyAttackCoords[GridAttackerNum-1][count][1]);
+                    count++;
+                    GridBoardImg[row-i][col-i].setImage(lady_pointer);
+                } else if((GridPosition[row-i][col-i]==defence_figure || GridPosition[row-i][col-i]==defence_lady) && GridPosition[row-i-1][col-i-1]==0){
                     n=true;
+                    res=true;
                     isAttack=true;
+                    GridAttacker[GridAttackerNum][row-i][col-i]=1;
+                    GridAttackerNum++;
                 }
             }
         } catch (Exception e){};
+        return res;
     }
 }
