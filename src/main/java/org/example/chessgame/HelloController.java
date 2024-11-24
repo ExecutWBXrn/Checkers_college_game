@@ -31,8 +31,8 @@ public class HelloController {
             {0, 0, 0, 0, 1, 0, 0, 0},
             {0, 3, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 2, 0, 3, 0},
+            {0, 0, 0, 0, 0, 2, 0, 0},
+            {0, 0, 0, 0, 0, 0, 3, 0},
             {0, 0, 0, 0, 0, 0, 0, 0}
     };
 
@@ -799,6 +799,8 @@ public class HelloController {
                     isAttack=true;
                     GridAttacker[GridAttackerNum][row+i][col+i]=1;
                     GridAttackerNum++;
+                } else if (GridPosition[row+i][col+i]!=0) {
+                    break;
                 }
             }
         } catch (Exception e){};
@@ -822,6 +824,8 @@ public class HelloController {
                     isAttack=true;
                     GridAttacker[GridAttackerNum][row+i][col-i]=1;
                     GridAttackerNum++;
+                } else if (GridPosition[row+i][col-i]!=0) {
+                    break;
                 }
             }
         } catch (Exception e){};
@@ -845,6 +849,8 @@ public class HelloController {
                     isAttack=true;
                     GridAttacker[GridAttackerNum][row-i][col+i]=1;
                     GridAttackerNum++;
+                } else if (GridPosition[row-i][col+i]!=0) {
+                    break;
                 }
             }
         } catch (Exception e){};
@@ -868,6 +874,8 @@ public class HelloController {
                     isAttack=true;
                     GridAttacker[GridAttackerNum][row-i][col-i]=1;
                     GridAttackerNum++;
+                } else if (GridPosition[row-i][col-i]!=0) {
+                    break;
                 }
             }
         } catch (Exception e){};
