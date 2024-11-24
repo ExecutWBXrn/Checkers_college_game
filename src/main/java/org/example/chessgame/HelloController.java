@@ -14,27 +14,27 @@ import javafx.scene.layout.GridPane;
 public class HelloController {
     boolean isWhite = true; // положення білих фігур
 
-    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-            {1, 0, 1, 0, 1, 0, 1, 0},
-            {0, 1, 0, 1, 0, 1, 0, 1},
-            {1, 0, 1, 0, 1, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2},
-            {2, 0, 2, 0, 2, 0, 2, 0},
-            {0, 2, 0, 2, 0, 2, 0, 2}
-    };
-
 //    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {1, 0, 1, 0, 1, 0, 1, 0},
+//            {0, 1, 0, 1, 0, 1, 0, 1},
+//            {1, 0, 1, 0, 1, 0, 1, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0},
 //            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0}
+//            {0, 2, 0, 2, 0, 2, 0, 2},
+//            {2, 0, 2, 0, 2, 0, 2, 0},
+//            {0, 2, 0, 2, 0, 2, 0, 2}
 //    };
+
+    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 3, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 2, 0, 3, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}
+    };
 
     int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
@@ -379,7 +379,7 @@ public class HelloController {
     }
 
     private void setDefaultPointer(String spot_of_color, int row, int col, int spot_row){ // встановлення стандартних pointer-ів.
-        if(thereIsNoAttack(spot_of_color)) return;
+        if(thereIsNoAttack(spot_of_color) | isAttack) return;
         System.out.println("isAtk? " + isAttack);
         if(!spot_of_color.equals("NNone") && ((step%2==0 && spot_of_color.equals("White")) || step%2!=0 && spot_of_color.equals("Black"))){
             try {
