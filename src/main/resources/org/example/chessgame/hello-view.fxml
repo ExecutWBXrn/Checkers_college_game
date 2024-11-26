@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #000814;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.chessgame.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #000814;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.chessgame.HelloController">
    <children>
       <ImageView fitHeight="481.0" fitWidth="702.0" layoutX="49.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -70,5 +70,7 @@
             <ImageView fx:id="img0_0" fitHeight="54.0" fitWidth="83.0" onMouseClicked="#mouse_clicked" pickOnBounds="true" preserveRatio="true" translateY="-8.0" />
          </children>
       </GridPane>
+      <ImageView fx:id="upper_coaster" fitHeight="150.0" fitWidth="114.0" layoutX="802.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="lower_coaster" fitHeight="150.0" fitWidth="114.0" layoutX="802.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </AnchorPane>

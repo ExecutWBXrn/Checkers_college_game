@@ -10,6 +10,8 @@ module org.example.chessgame {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
+    requires javafx.media;
 
     opens org.example.chessgame to javafx.fxml;
     exports org.example.chessgame;

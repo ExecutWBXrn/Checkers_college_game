@@ -1,40 +1,42 @@
 package org.example.chessgame;
 
 
+
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 public class HelloController {
     boolean isWhite = true; // положення білих фігур
 
-//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 1, 0, 1, 0, 1, 0, 1},
-//            {1, 0, 1, 0, 1, 0, 1, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 0, 0, 0, 0, 0, 0, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2},
-//            {2, 0, 2, 0, 2, 0, 2, 0},
-//            {0, 2, 0, 2, 0, 2, 0, 2}
-//    };
-
     int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 3, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 1, 0, 0, 0},
-            {0, 0, 0, 0, 0, 2, 0, 0},
-            {0, 0, 0, 0, 0, 0, 3, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0}
+            {0, 2, 0, 2, 0, 2, 0, 2},
+            {2, 0, 2, 0, 2, 0, 2, 0},
+            {0, 2, 0, 2, 0, 2, 0, 2}
     };
+
+//    int[][] GridPosition = new int[][] { // розставлення фігур для кращого розуміння
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0}
+//    };
 
     int white = -1, black = -1; // для полегшення сприйняття
     int step = 0;
@@ -43,6 +45,9 @@ public class HelloController {
     int defence_figure;
     int attack_lady;
     int defence_lady;
+
+    int count_of_white;
+    int count_of_black;
 
     Image white_fig_img; // імпорт фото шашок
     Image black_fig_img;
@@ -245,6 +250,17 @@ public class HelloController {
     @FXML
     private ImageView img7_7;
 
+    @FXML
+    private ImageView lower_coaster;
+
+    @FXML
+    private ImageView upper_coaster;
+
+    @FXML
+    private ImageView winner;
+
+    String[] white_black_str;
+
     String spot_of_color = "NNone";
 
     ImageView[][] GridBoardImg; // для розставлення фото у grid-і
@@ -260,6 +276,24 @@ public class HelloController {
         pointerCoords[0][1]=getColIndex;
 
         GridAttackerNum=0;
+
+        Media sound = new Media(getClass().getResource("media/backgroundmusic.mp3").toExternalForm());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setVolume(0.1);
+        mediaPlayer.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.setVolume(0.1);
+                mediaPlayer.play();
+            }
+        });
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.setVolume(0.1);
+                mediaPlayer.seek(Duration.ZERO);
+            }
+        });
 
         int spot_row_level = 0;
         int type = getTypeOfFigure(getRowIndex, getColIndex);
@@ -294,8 +328,20 @@ public class HelloController {
         } else if (clicked_img.getImage()==lady_pointer) {
             setDefaultLadyStep(getRowIndex, getColIndex, clicked_img);
         } else {clear_board_of_pointer();} // якщо на порожню клітинку
-    }
+        count_of_fig(GridPosition);
+        lower_coaster.setImage(new Image(getClass().getResource("img/standart_pack/seat_" + white_black_str[0] + "_" + (isWhite ? 12-count_of_black : 12-count_of_white) + ".png").toExternalForm(), true));
+        upper_coaster.setImage(new Image(getClass().getResource("img/standart_pack/backward_seat_" + white_black_str[1] + "_" + (isWhite ? 12-count_of_white : 12-count_of_black) + ".png").toExternalForm(), true));
 
+        if(count_of_black==0){
+            winner winner1 = new winner();
+            winner1.set_image();
+            winner1.winner_img.setImage(new Image(getClass().getResource("img/standart_pack/winner_background_white.png").toExternalForm(), true));
+        } else if (count_of_white==0) {
+            winner_black winner1 = new winner_black();
+            winner1.set_image();
+            winner1.winner_img.setImage(new Image(getClass().getResource("img/standart_pack/winner_background_black.png").toExternalForm(), true));
+        }
+    }
     @FXML
     void initialize() { // ініціалізатор, код що виконується один раз при запуску програми
         white_fig_img = new Image(getClass().getResource("img/standart_pack/white_figure.png").toExternalForm(), true);
@@ -305,11 +351,14 @@ public class HelloController {
         white_black_lady = new Image[]{white_lady_img, black_lady_img};
         Image[] img_figure = isWhite ? new Image[] {white_fig_img, black_fig_img} : new Image[] {black_fig_img, white_fig_img};
 
-
         white = isWhite == true ? 2 : 1;
         black = isWhite != true ? 2 : 1;
+        white_black_str = isWhite ? new String[]{"white", "black"} : new String[]{"black", "white"};
 
         GridAttackerNum=0;
+
+        lower_coaster.setImage(new Image(getClass().getResource("img/standart_pack/seat_" + white_black_str[0] + "_" + 0 + ".png").toExternalForm(), true));
+        upper_coaster.setImage(new Image(getClass().getResource("img/standart_pack/backward_seat_" + white_black_str[1] + "_" + 0 + ".png").toExternalForm(), true));
 
         attack_figure = step%2==0 ? white : black;
         defence_figure = attack_figure == white ? black : white;
@@ -355,6 +404,21 @@ public class HelloController {
             img_row++;
         }
         System.out.println("isDATK?: " + isAroundDoubleAttack(3, 5, 0, 0));
+
+    }
+
+    protected void count_of_fig(int[][] Grid){
+        count_of_white=0;
+        count_of_black=0;
+        for(int[] i: Grid){
+            for(int j: i){
+                if(j==white | j==3){
+                    count_of_white++;
+                } else if(j==black | j==4){
+                    count_of_black++;
+                }
+            }
+        }
     }
 
 
