@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.chessgame.winner">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" styleClass="backGround" stylesheets="@menu_style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.chessgame.winner">
    <children>
-      <ImageView fx:id="winner_img" fitHeight="600.0" fitWidth="900.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="winner_img" layoutX="184.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@img/standart_pack/winner_background_white.png" />
+            <Image url="@img/standart_pack/win_white.png" />
          </image></ImageView>
+      <Button fx:id="menu_btn" layoutX="184.0" layoutY="426.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="300.0" styleClass="myButtonMenu" stylesheets="@menu_button_style.css" />
+      <Button fx:id="restart_btn" layoutX="505.0" layoutY="426.0" mnemonicParsing="false" prefHeight="74.0" prefWidth="310.0" styleClass="myButtonRestart" stylesheets="@restart_button_style.css" />
    </children>
 </AnchorPane>

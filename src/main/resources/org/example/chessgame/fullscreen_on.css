@@ -1,0 +1,8 @@
+.fullscreen{
+    -fx-background-image: url("img/standart_pack/fullscreen_on.png"); /* Вкажіть шлях до вашого зображення */
+
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+    -fx-font-size: 16px; /* Розмір шрифту */
+    -fx-background-color: transparent;
+}

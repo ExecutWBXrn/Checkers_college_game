@@ -1,0 +1,42 @@
+.backGround{
+    -fx-background-image: url("img/standart_pack/workplace_blur.png");
+    -fx-background-size: 100% 100%;
+}
+.myButton {
+    -fx-background-image: url("img/standart_pack/start_button.png"); /* Вкажіть шлях до вашого зображення */
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+    -fx-font-size: 16px; /* Розмір шрифту */
+    -fx-background-color: transparent;
+}
+
+.title{
+    -fx-background-image: url("img/standart_pack/title.png"); /* Вкажіть шлях до вашого зображення */
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+
+    -fx-background-color: transparent;
+}
+.botButton{
+    -fx-background-image: url("img/standart_pack/bot_button.png"); /* Вкажіть шлях до вашого зображення */
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+    -fx-font-size: 16px; /* Розмір шрифту */
+    -fx-background-color: transparent;
+}
+
+.botButton:hover {
+    -fx-background-image: url("img/standart_pack/bot_button_hover.png");
+}
+
+.myButton:hover {
+    -fx-background-image: url("img/standart_pack/start_button_hover.png");
+}
+.fullscreen{
+    -fx-background-image: url("img/standart_pack/fullscreen_on.png"); /* Вкажіть шлях до вашого зображення */
+
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+    -fx-font-size: 16px; /* Розмір шрифту */
+    -fx-background-color: transparent;
+}

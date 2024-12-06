@@ -2,15 +2,21 @@ package org.example.chessgame;
 
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class HelloController {
@@ -263,8 +269,19 @@ public class HelloController {
 
     String spot_of_color = "NNone";
 
-    ImageView[][] GridBoardImg; // для розставлення фото у grid-і
+    int BotLVL = 0;
 
+    public HelloController() {
+    }
+
+    public HelloController(int BotLVL) {
+        this.BotLVL = BotLVL;
+    }
+
+
+    private MediaPlayer mediaPlayer;
+
+    ImageView[][] GridBoardImg; // для розставлення фото у grid-і
     @FXML
     void mouse_clicked(MouseEvent event) { // реакція програми на натискання на зображення
         ImageView clicked_img = (ImageView) event.getSource();
@@ -276,24 +293,6 @@ public class HelloController {
         pointerCoords[0][1]=getColIndex;
 
         GridAttackerNum=0;
-
-        Media sound = new Media(getClass().getResource("media/backgroundmusic.mp3").toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.setVolume(0.1);
-        mediaPlayer.setOnReady(new Runnable() {
-            @Override
-            public void run() {
-                mediaPlayer.setVolume(0.1);
-                mediaPlayer.play();
-            }
-        });
-        mediaPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                mediaPlayer.setVolume(0.1);
-                mediaPlayer.seek(Duration.ZERO);
-            }
-        });
 
         int spot_row_level = 0;
         int type = getTypeOfFigure(getRowIndex, getColIndex);
@@ -325,25 +324,188 @@ public class HelloController {
         } else if (clicked_img.getImage()==pointer) { // якщо на pointer
             System.out.println(true);
             setDefaultStep(getRowIndex, getColIndex, clicked_img, spot_of_color);
+            if(BotLVL == 1) botMove();
         } else if (clicked_img.getImage()==lady_pointer) {
             setDefaultLadyStep(getRowIndex, getColIndex, clicked_img);
+            if(BotLVL == 1) {
+                botMove();
+
+            }
         } else {clear_board_of_pointer();} // якщо на порожню клітинку
         count_of_fig(GridPosition);
         lower_coaster.setImage(new Image(getClass().getResource("img/standart_pack/seat_" + white_black_str[0] + "_" + (isWhite ? 12-count_of_black : 12-count_of_white) + ".png").toExternalForm(), true));
         upper_coaster.setImage(new Image(getClass().getResource("img/standart_pack/backward_seat_" + white_black_str[1] + "_" + (isWhite ? 12-count_of_white : 12-count_of_black) + ".png").toExternalForm(), true));
 
         if(count_of_black==0){
-            winner winner1 = new winner();
-            winner1.set_image();
-            winner1.winner_img.setImage(new Image(getClass().getResource("img/standart_pack/winner_background_white.png").toExternalForm(), true));
+            try {
+                // Завантажуємо стартову сцену
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloController.class.getResource("winner.fxml"));
+                Scene startMenuScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                // Отримуємо поточний Stage і встановлюємо нову сцену
+                Stage currentStage = (Stage) GridBoard.getScene().getWindow();
+                currentStage.setScene(startMenuScene);
+                currentStage.show();
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else if (count_of_white==0) {
-            winner_black winner1 = new winner_black();
-            winner1.set_image();
-            winner1.winner_img.setImage(new Image(getClass().getResource("img/standart_pack/winner_background_black.png").toExternalForm(), true));
+            try {
+                // Завантажуємо стартову сцену
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloController.class.getResource("winner_black.fxml"));
+                Scene startMenuScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                // Отримуємо поточний Stage і встановлюємо нову сцену
+                Stage currentStage = (Stage) GridBoard.getScene().getWindow();
+                currentStage.setScene(startMenuScene);
+                currentStage.show();
+                if (mediaPlayer != null) {
+                    mediaPlayer.stop();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+    void botMove() {
+        PauseTransition pause = new PauseTransition(Duration.seconds(1)); // Затримка 2 секунди
+        pause.setOnFinished(event -> {
+            for (int row = 0; row < GridPosition.length; row++) {
+                for (int col = 0; col < GridPosition[row].length; col++) {
+                    if (GridPosition[row][col] == 1) { // Якщо це шашка бота
+                        getRowFigure = row;
+                        getColFigure = col;
+
+                        setDefaultAttackPointer(row, col, "Black");
+                        if (isAttack) { // Якщо є можливість атаки
+                            System.out.println("isAttack");
+                            int[] farthest = getFarthestCoords(row, col); // Отримати найдальші координати для атаки
+                            setDefaultStep(farthest[0], farthest[1], GridBoardImg[farthest[0]][farthest[1]], "Black");
+                            count_of_fig(GridPosition);
+                            lower_coaster.setImage(new Image(getClass().getResource("img/standart_pack/seat_" + white_black_str[0] + "_" + (isWhite ? 12-count_of_black : 12-count_of_white) + ".png").toExternalForm(), true));
+                            upper_coaster.setImage(new Image(getClass().getResource("img/standart_pack/backward_seat_" + white_black_str[1] + "_" + (isWhite ? 12-count_of_white : 12-count_of_black) + ".png").toExternalForm(), true));
+                            if(count_of_black==0){
+                                try {
+                                    // Завантажуємо стартову сцену
+                                    FXMLLoader fxmlLoader = new FXMLLoader(HelloController.class.getResource("winner.fxml"));
+                                    Scene startMenuScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                                    // Отримуємо поточний Stage і встановлюємо нову сцену
+                                    Stage currentStage = (Stage) GridBoard.getScene().getWindow();
+                                    currentStage.setScene(startMenuScene);
+                                    currentStage.show();
+                                    if (mediaPlayer != null) {
+                                        mediaPlayer.stop();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } else if (count_of_white==0) {
+                                try {
+                                    // Завантажуємо стартову сцену
+                                    FXMLLoader fxmlLoader = new FXMLLoader(HelloController.class.getResource("winner_black.fxml"));
+                                    Scene startMenuScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                                    // Отримуємо поточний Stage і встановлюємо нову сцену
+                                    Stage currentStage = (Stage) GridBoard.getScene().getWindow();
+                                    currentStage.setScene(startMenuScene);
+                                    currentStage.show();
+                                    if (mediaPlayer != null) {
+                                        mediaPlayer.stop();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            return;
+                        }
+                    }
+
+                }
+            }
+            // Якщо атаки немає, виконуємо звичайний хід
+            if (!isAttack) {
+                for (int row = 0; row < GridPosition.length; row++) {
+                    for (int col = 0; col < GridPosition[row].length; col++) {
+                        if (GridPosition[row][col] == 1) { // Якщо це шашка бота
+                            getRowFigure = row;
+                            getColFigure = col;
+
+                            // Перевіряємо можливі ходи
+                            if (isValidMove(row + 1, col + 1)) { // Хід вправо вниз
+                                setDefaultStep(row + 1, col + 1, GridBoardImg[row + 1][col + 1], "Black");
+                                return;
+                            }
+                            if (isValidMove(row + 1, col - 1)) { // Хід вліво вниз
+                                setDefaultStep(row + 1, col - 1, GridBoardImg[row + 1][col - 1], "Black");
+                                return;
+                            }
+                            // Додайте інші перевірки для можливих ходів за потреби
+                        }
+                    }
+                }
+            }
+        });
+        pause.play(); // Запускаємо затримку
+    }
+
+    // Метод для перевірки, чи можливий хід на вказану позицію
+    private boolean isValidMove(int targetRow, int targetCol) {
+        // Перевіряємо, чи цільова клітинка знаходиться в межах поля
+        if (targetRow >= 0 && targetRow < GridPosition.length && targetCol >= 0 && targetCol < GridPosition[0].length) {
+            // Перевіряємо, чи клітинка порожня (0)
+            if (GridPosition[targetRow][targetCol] == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int[] getFarthestCoords(int startRow, int startCol) {
+        int[] farthestCoords = new int[2]; // Масив для збереження координат
+        double maxDistance = -1; // Початкове значення максимальної відстані
+
+        for (int i = 0; i < GridAttackerNum; i++) {
+            int targetRow = GridAttackerCoords[i][0];
+            int targetCol = GridAttackerCoords[i][1];
+
+            // Розрахунок евклідової відстані
+            double distance = Math.sqrt(Math.pow(targetRow - startRow, 2) + Math.pow(targetCol - startCol, 2));
+
+            // Якщо відстань більша за поточний максимум, оновити
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                farthestCoords[0] = targetRow;
+                farthestCoords[1] = targetCol;
+            }
+        }
+
+        return farthestCoords;
     }
     @FXML
     void initialize() { // ініціалізатор, код що виконується один раз при запуску програми
+
+        Media sound = new Media(getClass().getResource("media/backgroundmusic.mp3").toExternalForm());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setVolume(0.1);
+        mediaPlayer.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.setVolume(0.1);
+                mediaPlayer.play();
+            }
+        });
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                mediaPlayer.setVolume(0.1);
+                mediaPlayer.seek(Duration.ZERO);
+            }
+        });
+
         white_fig_img = new Image(getClass().getResource("img/standart_pack/white_figure.png").toExternalForm(), true);
         black_fig_img = new Image(getClass().getResource("img/standart_pack/black_figure.png").toExternalForm(), true);
 
@@ -556,11 +718,12 @@ public class HelloController {
         turn_to_lady(row, col);
         TrackPosition(GridPosition);
         isAttack=false;
-        if(isAroundDoubleAttack(row, col, 0, 0) || isAroundAnyAttack(row, col)){
+        if((isAroundDoubleAttack(row, col, 0, 0) || isAroundAnyAttack(row, col)) && isAttack){
             getRowFigure=row;
             getColFigure=col;
             setDefaultAttackPointer(row, col, spot_of_fig);
         } else{
+            isAttack=false;
             isAttackForAnyAttackFunc=false;
             step++;
             attack_figure = step%2==0 ? white : black;

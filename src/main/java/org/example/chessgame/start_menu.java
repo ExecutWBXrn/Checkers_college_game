@@ -17,16 +17,20 @@ import java.io.IOException;
 
 public class start_menu extends Application {
     static String[] args_in;
-    Stage stage_of_start;
+    @FXML
+    private Button play_but;
+    public Button bot_but;
     @Override
     public void start(Stage stage) throws IOException {
-        stage_of_start=stage;
         FXMLLoader fxmlLoader = new FXMLLoader(start_menu.class.getResource("start_menu.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
         stage.setTitle("Chess");
-        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.DECORATED);
         stage.setScene(scene);
+        stage.setFullScreen(true);
+        stage.setResizable(false);
         stage.show();
+
     }
 
     public static void main(String[] args) {
@@ -40,23 +44,42 @@ public class start_menu extends Application {
     @FXML
     private URL location;
 
-    @FXML
-    private Button play_but;
+
 
     @FXML
     void initialize() {
         play_but.setOnMouseClicked(mouseEvent -> {
             mouseEvent.getButton();
             try {
+                // Завантажуємо нову сцену з файлу game_scene.fxml
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-                Stage stage2 = new Stage();
-                stage2.setTitle("Chess");
-                stage2.initStyle(StageStyle.DECORATED);
-                stage2.setScene(scene);
-                stage2.show();
-                stage_of_start.hide();
-            } catch (Exception e){};
+                Scene newScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                // Отримуємо поточний Stage і встановлюємо нову сцену
+                Stage currentStage = (Stage) play_but.getScene().getWindow();
+                currentStage.setScene(newScene);
+                currentStage.setFullScreen(true);
+                currentStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        bot_but.setOnMouseClicked(mouseEvent -> {
+            mouseEvent.getButton();
+            try {
+                // Завантажуємо нову сцену з файлу game_scene.fxml
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+                fxmlLoader.setControllerFactory(type -> new HelloController(1));
+                Scene newScene = new Scene(fxmlLoader.load(), 1000, 600);
+
+                // Отримуємо поточний Stage і встановлюємо нову сцену
+                Stage currentStage = (Stage) play_but.getScene().getWindow();
+                currentStage.setScene(newScene);
+                currentStage.setFullScreen(true);
+                currentStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 }

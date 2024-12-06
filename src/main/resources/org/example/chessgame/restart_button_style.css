@@ -1,0 +1,12 @@
+.myButtonRestart {
+    -fx-background-image: url("img/standart_pack/restart_button.png"); /* Вкажіть шлях до вашого зображення */
+
+    -fx-background-repeat: no-repeat; /* Запобігає повторенню зображення */
+    -fx-text-fill: white; /* Колір тексту */
+    -fx-font-size: 16px; /* Розмір шрифту */
+    -fx-background-color: transparent;
+}
+
+.myButtonRestart:hover {
+    -fx-background-image: url("img/standart_pack/restart_button_hover.png");
+}
